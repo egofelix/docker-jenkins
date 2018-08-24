@@ -13,5 +13,9 @@ RUN apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 581
 RUN echo 'deb https://apt.dockerproject.org/repo debian-stretch main' > /etc/apt/sources.list.d/docker.list
 RUN apt-get update && apt-get install -y dotnet-sdk-2.1 dpkg-dev dos2unix apt-utils zip docker-engine
 RUN usermod -a -G docker jenkins
+RUN echo 'jenkins ALL=(ALL) NOPASSWD: /usr/local/bin/docker-squash' >> /etc/sudoers
+RUN wget https://github.com/jwilder/docker-squash/releases/download/v0.2.0/docker-squash-linux-amd64-v0.2.0.tar.gz
+RUN tar -C /usr/local/bin -xzvf docker-squash-linux-amd64-v0.2.0.tar.gz
+RUN rm docker-squash-linux-amd64-v0.2.0.tar.gz
 
 USER jenkins
