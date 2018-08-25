@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends curl wget apt-t
     echo 'deb [arch=amd64] https://download.docker.com/linux/debian stretch stable' > /etc/apt/sources.list.d/docker.list && \
     wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.asc.gpg && chown root:root /etc/apt/trusted.gpg.d/microsoft.asc.gpg && \
     wget -qO- https://packages.microsoft.com/config/debian/9/prod.list > /etc/apt/sources.list.d/microsoft-prod.list && chown root:root /etc/apt/sources.list.d/microsoft-prod.list && \
-    apt-get update && apt-get install -y --no-install-recommends dotnet-sdk-2.1 dpkg-dev dos2unix apt-utils zip docker-engine supervisor && \
+    apt-get update && apt-get install -y --no-install-recommends dotnet-sdk-2.1 dpkg-dev dos2unix apt-utils zip docker-ce supervisor && \
     rm -rf /usr/share/dotnet/sdk/NuGetFallbackFolder && \
     rm -rf /var/lib/apt/lists/* && \
     mkdir -p /etc/docker/ && \
