@@ -9,7 +9,7 @@ ENV DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
 ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
 
 RUN apt-get update && apt-get install -y --no-install-recommends curl wget apt-transport-https && \
-    curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add - && \
+    curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add - && \
     echo 'deb [arch=amd64] https://download.docker.com/linux/debian stretch stable' > /etc/apt/sources.list.d/docker.list && \
     wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.asc.gpg && chown root:root /etc/apt/trusted.gpg.d/microsoft.asc.gpg && \
     wget -qO- https://packages.microsoft.com/config/debian/9/prod.list > /etc/apt/sources.list.d/microsoft-prod.list && chown root:root /etc/apt/sources.list.d/microsoft-prod.list && \
