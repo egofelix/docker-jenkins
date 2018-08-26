@@ -1,4 +1,4 @@
-FROM jenkins/jenkins:lts-slim
+FROM jenkins/jenkins:lts
 
 MAINTAINER EgoFelix <docker@egofelix.de>
 
