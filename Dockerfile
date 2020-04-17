@@ -16,7 +16,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends curl wget apt-t
     apt-get update && apt-get install -y --no-install-recommends dotnet-sdk-2.1 dpkg-dev dos2unix apt-utils zip docker-ce supervisor
 
 # ARMHF Support
-RUN apt-get install -y crossbuild-essential-armhf libcrypto++-dev:armhf libcurl4-openssl-dev:armhf libdb5.3++-dev:armhf libfreeimage-dev:armhf libreadline-dev:armhf libfuse-dev:armhf
+RUN apt-get install -y crossbuild-essential-armhf g++-arm-linux-gnueabihf
+RUN apt-get install -y libcrypto++-dev:armhf libcurl4-openssl-dev:armhf libdb5.3++-dev:armhf libfreeimage-dev:armhf libreadline-dev:armhf libfuse-dev:armhf
+
+# Also install curl for armhf
+RUN apt-get install -y -o Dpkg::Options::="--force-overwrite" libcurl4-openssl-dev:armhf
+RUN apt-get install -y -o Dpkg::Options::="--force-overwrite" libcurl4-openssl-dev
   
 RUN rm -rf /usr/share/dotnet/sdk/NuGetFallbackFolder && \
     rm -rf /var/lib/apt/lists/* && \
