@@ -13,13 +13,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends curl wget apt-t
     echo 'deb [arch=amd64] https://download.docker.com/linux/debian stretch stable' > /etc/apt/sources.list.d/docker.list && \
     wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.asc.gpg && chown root:root /etc/apt/trusted.gpg.d/microsoft.asc.gpg && \
     wget -qO- https://packages.microsoft.com/config/debian/9/prod.list > /etc/apt/sources.list.d/microsoft-prod.list && chown root:root /etc/apt/sources.list.d/microsoft-prod.list && \
-    apt-get update && apt-get install -y --no-install-recommends dotnet-sdk-2.1 dpkg-dev dos2unix apt-utils zip docker-ce supervisor && \
-    apt-get install -y --no-install-recommends libcrypto++-dev libcurl4-openssl-dev libdb5.3++-dev libfreeimage-dev libreadline-dev libfuse-dev git ca-certificates make g++ pkg-config fuse kmod && \
-    rm -rf /usr/share/dotnet/sdk/NuGetFallbackFolder && \
+    apt-get update && apt-get install -y --no-install-recommends dotnet-sdk-2.1 dpkg-dev dos2unix apt-utils zip docker-ce supervisor
+
+# ARMHF Support
+RUN apt-get install -y crossbuild-essential-armhf libcrypto++-dev:armhf libcurl4-openssl-dev:armhf libdb5.3++-dev:armhf libfreeimage-dev:armhf libreadline-dev:armhf libfuse-dev:armhf
+  
+RUN rm -rf /usr/share/dotnet/sdk/NuGetFallbackFolder && \
     rm -rf /var/lib/apt/lists/* && \
     mkdir -p /etc/docker/ && \
     echo '{ "experimental": true }' > /etc/docker/daemon.json
-
+  
 COPY etc/ /etc/
 
 ENTRYPOINT /usr/bin/supervisord --nodaemon --configuration /etc/supervisor/supervisord.conf --pidfile /run/supervisord.pid
