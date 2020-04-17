@@ -24,6 +24,7 @@ RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor 
 
 # MegaFuse
 # ARMHF
+RUN dpkg --add-architecture armhf && apt-get update
 RUN apt-get install -y crossbuild-essential-armhf g++-arm-linux-gnueabihf
 RUN apt-get install -y -o Dpkg::Options::="--force-overwrite" libcrypto++-dev:armhf libcurl4-openssl-dev:armhf libdb5.3++-dev:armhf libfreeimage-dev:armhf libreadline-dev:armhf libfuse-dev:armhf libcurl4-openssl-dev:armhf
 # AMD64
