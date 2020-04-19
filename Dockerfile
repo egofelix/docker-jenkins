@@ -22,6 +22,10 @@ RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor 
     apt-get update && apt-get install -y --no-install-recommends dotnet-sdk-2.1 && \
     rm -rf /usr/share/dotnet/sdk/NuGetFallbackFolder
 
+# Allow Jenkins to call docker
+RUN apt-get install docker qemu-user
+RUN usermod -aG docker jenkins
+
 # MegaFuse
 # ARMHF
 #RUN dpkg --add-architecture armhf && apt-get update
