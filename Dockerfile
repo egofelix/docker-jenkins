@@ -23,7 +23,7 @@ RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor 
     rm -rf /usr/share/dotnet/sdk/NuGetFallbackFolder
 
 # Allow Jenkins to call docker
-RUN apt-get install docker qemu-user
+RUN apt-get install -y --no-install-recommends qemu-user
 RUN usermod -aG docker jenkins
 
 # MegaFuse
