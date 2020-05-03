@@ -9,12 +9,12 @@ FULL_VERSION="0.1.${REVISION_NUMBER}.${BUILD_NUMBER}"
 arch="amd64"
 
 targetArch=""
-if [[ "$arch" == "armhf" ]];
+if [[ "${TARGET^^}" == "ARMHF" ]];
 then
   targetArch=linux-arm
 fi;
 
-if [[ "$arch" == "amd64" ]];
+if [[ "${TARGET^^}" == "AMD64" ]];
 then
   targetArch=linux-x64
 fi;
@@ -55,6 +55,7 @@ dos2unix ${PROJECT}/BuildInfo/${packageName}.service && mkdir -p package_${arch}
 sed -e "s/\\\${packageName}/${packageName}/g" -e "s/\${arch}/${arch}/g" ${PROJECT}/BuildInfo/${packageName}.service > package_${arch}_${FULL_VERSION}/lib/systemd/system/${packageName}.service
 
 # Build it
+echo Building ${packageName} for ${TARGET,,}
 HOME=/var/jenkins_home/ DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true dotnet publish -r ${targetArch} -c Release "/p:Version=${FULL_VERSION}"
 
 # Copy content to /opt/${PROJECT}
@@ -70,8 +71,10 @@ cp -r ${PROJECT}/bin/Release/netcoreapp*.0/${targetArch}/publish/* package_${arc
 
 
 # Build Package
+echo Creating package ${packageName} for ${TARGET,,}
 dpkg-deb --build package_${arch}_${FULL_VERSION}
 
 # Copy Package to Repo
-mkdir -p /var/packages/debian/dists/stable/main/binary-${arch}/
-mv package_${arch}_${FULL_VERSION}.deb /var/packages/debian/dists/stable/main/binary-${arch}/${packageName}_${FULL_VERSION}.deb
+echo Releasing package ${packageName} for ${TARGET,,}
+mkdir -p /var/packages/debian/dists/stable/main/binary-${TARGET,,}/
+mv package_${arch}_${FULL_VERSION}.deb /var/packages/debian/dists/stable/main/binary-${TARGET,,}/${packageName}_${FULL_VERSION}.deb
