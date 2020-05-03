@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends curl wget apt-t
 # Net Core
 RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.asc.gpg && chown root:root /etc/apt/trusted.gpg.d/microsoft.asc.gpg && \
     wget -qO- https://packages.microsoft.com/config/debian/9/prod.list > /etc/apt/sources.list.d/microsoft-prod.list && chown root:root /etc/apt/sources.list.d/microsoft-prod.list && \
-    apt-get update && apt-get install -y --no-install-recommends dotnet-sdk-2.1 && \
+    apt-get update && apt-get install -y --no-install-recommends dotnet-sdk-2.1 dotnet-sdk-3.0 dotnet-sdk-3.1 && \
     rm -rf /usr/share/dotnet/sdk/NuGetFallbackFolder
 
 # Allow Jenkins to call docker
