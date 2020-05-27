@@ -62,13 +62,6 @@ HOME=/var/jenkins_home/ DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true dotnet publish -r
 mkdir -p package_${arch}_${FULL_VERSION}/opt/${packageName}
 cp -r ${PROJECT}/bin/Release/netcoreapp*.0/${targetArch}/publish/* package_${arch}_${FULL_VERSION}/opt/${packageName}/
 
-# Test it
-HOME=/var/jenkins_home/ DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true dotnet test --results-directory:testResults --collect:"Code Coverage"
-for f in $(find testResults -name '*.coverage');
-do
-  echo Coverage File found $f;
-done
-
 # Copy MaiNConf
 #dos2unix -n ${PROJECT}.BuildInfo/configuration/actions.iptables.conf banthosebastards_${FULL_VERSION}/etc/${PROJECT}/actions.conf
 #dos2unix -n ${PROJECT}.BuildInfo/configuration/main.conf banthosebastards_${FULL_VERSION}/etc/${PROJECT}/main.conf
