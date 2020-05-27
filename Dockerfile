@@ -24,12 +24,13 @@ RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor 
 
 # CodeCoverage for Net Core
 RUN mkdir /tools && \
-    wget https://www.nuget.org/api/v2/package/ReportGenerator/4.6.0 -qO /tools/ReportGenerator.nupkg && \
-    wget https://www.nuget.org/api/v2/package/Microsoft.CodeCoverage/16.6.1 -qO /tools/Microsoft.CodeCoverage.nupkg
+    wget https://www.nuget.org/api/v2/package/ReportGenerator/4.6.0 -qO /tools/ReportGenerator.nupkg
+#    wget https://www.nuget.org/api/v2/package/Microsoft.CodeCoverage/16.6.1 -qO /tools/Microsoft.CodeCoverage.nupkg
 
 RUN apt-get install -y --no-install-recommends zip
-RUN unzip -o /tools/ReportGenerator.nupkg
-RUN unzip -o /tools/Microsoft.CodeCoverage.nupkg
+RUN mkdir /tools/ReportGenerator
+RUN unzip -o /tools/ReportGenerator.nupkg -d /tools/ReportGenerator
+#RUN unzip -o /tools/Microsoft.CodeCoverage.nupkg
 
 # Allow Jenkins to call docker
 RUN apt-get install -y --no-install-recommends qemu-user
