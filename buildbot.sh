@@ -42,7 +42,7 @@ mkdir -p package_${arch}_${FULL_VERSION}/DEBIAN
 # Create Package Info
 packageName=$(cat ${PROJECT}/BuildInfo/control.txt | grep 'Package:' | cut -d':' -f 2 | sed -e 's/[[:space:]]*$//' | sed -e 's/^[[:space:]]*//')
 sed -e "s/\\\${packageName}/${packageName}/g" -e "s/\${arch}/${arch}/g" ${PROJECT}/BuildInfo/postinst.txt > package_${arch}_${FULL_VERSION}/DEBIAN/postinst
-sed -e "s/\\\${packageName}/${packageName}/g" -e "s/\${arch}/${arch}/g" ${PROJECT}/BuildInfo/preinst.txt > package_${arch}_${FULL_VERSION}/DEBIAN/preinst
+REVISION_NUMBERsed -e "s/\\\${packageName}/${packageName}/g" -e "s/\${arch}/${arch}/g" ${PROJECT}/BuildInfo/preinst.txt > package_${arch}_${FULL_VERSION}/DEBIAN/preinst
 sed -e "s/\\\${packageName}/${packageName}/g" -e "s/\${arch}/${arch}/g" ${PROJECT}/BuildInfo/prerm.txt > package_${arch}_${FULL_VERSION}/DEBIAN/prerm
 sed -e "s/\\\${packageName}/${packageName}/g" -e "s/\${arch}/${arch}/g" ${PROJECT}/BuildInfo/control.txt > package_${arch}_${FULL_VERSION}/DEBIAN/control
 echo "" >> package_${arch}_${FULL_VERSION}/DEBIAN/control
@@ -61,6 +61,13 @@ HOME=/var/jenkins_home/ DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true dotnet publish -r
 # Copy content to /opt/${PROJECT}
 mkdir -p package_${arch}_${FULL_VERSION}/opt/${packageName}
 cp -r ${PROJECT}/bin/Release/netcoreapp*.0/${targetArch}/publish/* package_${arch}_${FULL_VERSION}/opt/${packageName}/
+
+# Test it
+HOME=/var/jenkins_home/ DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true dotnet test --results-directory:testResults --collect:"Code Coverage"
+for f in $(find testResults -name '*.coverage');
+do
+  echo Coverage File found $f;
+done
 
 # Copy MaiNConf
 #dos2unix -n ${PROJECT}.BuildInfo/configuration/actions.iptables.conf banthosebastards_${FULL_VERSION}/etc/${PROJECT}/actions.conf

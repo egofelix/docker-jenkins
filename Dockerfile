@@ -9,21 +9,20 @@ ENV DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
 ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
 
 # Basic Install
-RUN apt-get update && apt-get install -y --no-install-recommends curl wget apt-transport-https && \
+RUN apt-get update && apt-get install -y --no-install-recommends curl wget apt-transport-https gnupg && \
     curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add - && \
     echo 'deb [arch=amd64] https://download.docker.com/linux/debian stretch stable' > /etc/apt/sources.list.d/docker.list && \
     apt-get update && apt-get install -y --no-install-recommends dpkg-dev dos2unix apt-utils zip docker-ce supervisor && \
     mkdir -p /etc/docker/ && \
     echo '{ "experimental": true }' > /etc/docker/daemon.json
 
-# Net Core
+# Net Core & Powershell
 RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.asc.gpg && chown root:root /etc/apt/trusted.gpg.d/microsoft.asc.gpg && \
     wget -qO- https://packages.microsoft.com/config/debian/9/prod.list > /etc/apt/sources.list.d/microsoft-prod.list && chown root:root /etc/apt/sources.list.d/microsoft-prod.list && \
-    apt-get update && apt-get install -y --no-install-recommends dotnet-sdk-3.1 && \
+    apt-get update && apt-get install -y --no-install-recommends dotnet-sdk-3.1 powershell && \
     rm -rf /usr/share/dotnet/sdk/NuGetFallbackFolder
 
 # CodeCoverage for Net Core
-
 RUN mkdir /tools && \
     wget https://www.nuget.org/api/v2/package/ReportGenerator/4.6.0 -qO /tools/ReportGenerator.nupkg && \
     wget https://www.nuget.org/api/v2/package/Microsoft.CodeCoverage/16.6.1 -qO /tools/Microsoft.CodeCoverage.nupkg
