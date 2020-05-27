@@ -48,7 +48,9 @@ RUN rm -rf /var/lib/apt/lists/*
   
 COPY etc/ /etc/
 COPY buildbot.sh /opt/buildbot
+COPY testbot.ps1 /opt/testbot
 
 RUN chmod +x /opt/buildbot
+RUN chmod +x /opt/testbot
 
 ENTRYPOINT /usr/bin/supervisord --nodaemon --configuration /etc/supervisor/supervisord.conf --pidfile /run/supervisord.pid
