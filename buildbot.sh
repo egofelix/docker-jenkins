@@ -42,7 +42,7 @@ mkdir -p package_${arch}_${FULL_VERSION}/DEBIAN
 # Create Package Info
 packageName=$(cat ${PROJECT}/BuildInfo/control.txt | grep 'Package:' | cut -d':' -f 2 | sed -e 's/[[:space:]]*$//' | sed -e 's/^[[:space:]]*//')
 sed -e "s/\\\${packageName}/${packageName}/g" -e "s/\${arch}/${arch}/g" ${PROJECT}/BuildInfo/postinst.txt > package_${arch}_${FULL_VERSION}/DEBIAN/postinst
-REVISION_NUMBERsed -e "s/\\\${packageName}/${packageName}/g" -e "s/\${arch}/${arch}/g" ${PROJECT}/BuildInfo/preinst.txt > package_${arch}_${FULL_VERSION}/DEBIAN/preinst
+sed -e "s/\\\${packageName}/${packageName}/g" -e "s/\${arch}/${arch}/g" ${PROJECT}/BuildInfo/preinst.txt > package_${arch}_${FULL_VERSION}/DEBIAN/preinst
 sed -e "s/\\\${packageName}/${packageName}/g" -e "s/\${arch}/${arch}/g" ${PROJECT}/BuildInfo/prerm.txt > package_${arch}_${FULL_VERSION}/DEBIAN/prerm
 sed -e "s/\\\${packageName}/${packageName}/g" -e "s/\${arch}/${arch}/g" ${PROJECT}/BuildInfo/control.txt > package_${arch}_${FULL_VERSION}/DEBIAN/control
 echo "" >> package_${arch}_${FULL_VERSION}/DEBIAN/control
@@ -63,12 +63,18 @@ mkdir -p package_${arch}_${FULL_VERSION}/opt/${packageName}
 cp -r ${PROJECT}/bin/Release/netcoreapp*.0/${targetArch}/publish/* package_${arch}_${FULL_VERSION}/opt/${packageName}/
 
 # Copy MaiNConf
-#dos2unix -n ${PROJECT}.BuildInfo/configuration/actions.iptables.conf banthosebastards_${FULL_VERSION}/etc/${PROJECT}/actions.conf
-#dos2unix -n ${PROJECT}.BuildInfo/configuration/main.conf banthosebastards_${FULL_VERSION}/etc/${PROJECT}/main.conf
+ETCDIR=${PROJECT}/BuildInfo/etc/
+if [ -d "$ETCDIR" ]; then
+  FILES=${ETCDIR}*
+  mkdir -p package_${arch}_${FULL_VERSION}/etc/${packageName}
 
-# Append .new to all config files
-#find package_${arch}_${FULL_VERSION}/etc/${packageName}/ -type f -exec mv '{}' '{}'.new \;
+  for f in $FILES
+    dos2unix ${PROJECT}/BuildInfo/etc/$f
+    dos2unix ${PROJECT}/BuildInfo/etc/$f
 
+    sed -e "s/\\\${packageName}/${packageName}/g" -e "s/\${arch}/${arch}/g" ${PROJECT}/BuildInfo/etc/$f package_${arch}_${FULL_VERSION}/etc/${packageName}/$f.new
+  done
+fi;
 
 # Build Package
 echo Creating package ${packageName} for ${TARGET,,}
