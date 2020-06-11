@@ -54,6 +54,27 @@ dos2unix ${PROJECT}/BuildInfo/${packageName}.service && mkdir -p package_${arch}
 dos2unix ${PROJECT}/BuildInfo/${packageName}.service && mkdir -p package_${arch}_${FULL_VERSION}/lib/systemd/system/
 sed -e "s/\\\${packageName}/${packageName}/g" -e "s/\${arch}/${arch}/g" ${PROJECT}/BuildInfo/${packageName}.service > package_${arch}_${FULL_VERSION}/lib/systemd/system/${packageName}.service
 
+# Copy MaiNConf
+ETCDIR=${PROJECT}/BuildInfo/etc/
+if [ -d "$ETCDIR" ]; then
+  FILES=$(find ${ETCDIR} -type f)
+  mkdir -p package_${arch}_${FULL_VERSION}/etc/${packageName}
+
+  for f in $FILES
+  do
+    RELFN=$(realpath --relative-to=${ETCDIR} $f)
+    DIRECTORY=$(dirname ${RELFN})
+    FILENAME=$(basename ${RELFN})
+
+    mkdir -p ${PROJECT}/BuildInfo/etc/${DIRECTORY}
+    dos2unix ${PROJECT}/BuildInfo/etc/${RELFN}
+    dos2unix ${PROJECT}/BuildInfo/etc/${RELFN}
+
+    mkdir -p package_${arch}_${FULL_VERSION}/etc/${packageName}/${DIRECTORY}
+    sed -e "s/\\\${packageName}/${packageName}/g" -e "s/\${arch}/${arch}/g" ${PROJECT}/BuildInfo/etc/${RELFN} > package_${arch}_${FULL_VERSION}/etc/${packageName}/${RELFN}.new
+  done
+fi;
+
 # Build it
 echo Building ${packageName} for ${TARGET,,}
 HOME=/var/jenkins_home/ DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true dotnet publish -r ${targetArch} -c Release "/p:Version=${FULL_VERSION}"
@@ -61,20 +82,6 @@ HOME=/var/jenkins_home/ DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true dotnet publish -r
 # Copy content to /opt/${PROJECT}
 mkdir -p package_${arch}_${FULL_VERSION}/opt/${packageName}
 cp -r ${PROJECT}/bin/Release/netcoreapp*.0/${targetArch}/publish/* package_${arch}_${FULL_VERSION}/opt/${packageName}/
-
-# Copy MaiNConf
-ETCDIR=${PROJECT}/BuildInfo/etc/
-if [ -d "$ETCDIR" ]; then
-  FILES=${ETCDIR}*
-  mkdir -p package_${arch}_${FULL_VERSION}/etc/${packageName}
-
-  for f in $FILES
-    dos2unix ${PROJECT}/BuildInfo/etc/$f
-    dos2unix ${PROJECT}/BuildInfo/etc/$f
-
-    sed -e "s/\\\${packageName}/${packageName}/g" -e "s/\${arch}/${arch}/g" ${PROJECT}/BuildInfo/etc/$f package_${arch}_${FULL_VERSION}/etc/${packageName}/$f.new
-  done
-fi;
 
 # Build Package
 echo Creating package ${packageName} for ${TARGET,,}
