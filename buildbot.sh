@@ -81,7 +81,7 @@ HOME=/var/jenkins_home/ DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true dotnet publish -r
 
 # Copy content to /opt/${PROJECT}
 mkdir -p package_${arch}_${FULL_VERSION}/opt/${packageName}
-cp -r ${PROJECT}/bin/Release/netcoreapp*.0/${targetArch}/publish/* package_${arch}_${FULL_VERSION}/opt/${packageName}/
+cp -r ${PROJECT}/bin/Release/netcoreapp*/${targetArch}/publish/* package_${arch}_${FULL_VERSION}/opt/${packageName}/
 
 # Build Package
 echo Creating package ${packageName} for ${TARGET,,}
