@@ -83,6 +83,9 @@ HOME=/var/jenkins_home/ DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true dotnet publish -r
 mkdir -p package_${arch}_${FULL_VERSION}/opt/${packageName}
 cp -r ${PROJECT}/bin/Release/netcoreapp*/${targetArch}/publish/* package_${arch}_${FULL_VERSION}/opt/${packageName}/
 
+# Cleanup
+HOME=/var/jenkins_home/ DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true dotnet nuget locals -c all
+
 # Build Package
 echo Creating package ${packageName} for ${TARGET,,}
 dpkg-deb --build package_${arch}_${FULL_VERSION}
