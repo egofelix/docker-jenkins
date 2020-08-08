@@ -32,6 +32,9 @@ RUN mkdir /tools/ReportGenerator
 RUN unzip -o /tools/ReportGenerator.nupkg -d /tools/ReportGenerator
 #RUN unzip -o /tools/Microsoft.CodeCoverage.nupkg
 
+# Dotnet retire
+RUN dotnet tool install -g dotnet-retire
+
 # Allow Jenkins to call docker
 RUN apt-get install -y --no-install-recommends qemu-user
 RUN usermod -aG docker jenkins
