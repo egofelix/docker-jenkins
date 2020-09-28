@@ -35,6 +35,10 @@ RUN unzip -o /tools/ReportGenerator.nupkg -d /tools/ReportGenerator
 # Dotnet retire
 RUN dotnet tool install -g dotnet-retire
 
+# Fix Nuget
+RUN mkdir -p /tmp/NuGetScratch
+RUN chown -R jenkins:jenkins /tmp/NuGetScratch
+
 # Allow Jenkins to call docker
 RUN apt-get install -y --no-install-recommends qemu-user
 RUN usermod -aG docker jenkins
