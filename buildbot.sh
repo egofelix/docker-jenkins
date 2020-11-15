@@ -79,6 +79,13 @@ fi;
 echo Building ${packageName} for ${TARGET,,}
 HOME=/var/jenkins_home/ DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true dotnet publish -r ${targetArch} -c Release "/p:Version=${FULL_VERSION}"
 
+## Did the build worked?
+if [ $? -ne 0 ]
+then
+  echo Failed to build the project
+  exit 1
+fi;
+
 # Copy content to /opt/${PROJECT}
 mkdir -p package_${arch}_${FULL_VERSION}/opt/${packageName}
 cp -r ${PROJECT}/bin/Release/netcoreapp*/${targetArch}/publish/* package_${arch}_${FULL_VERSION}/opt/${packageName}/
