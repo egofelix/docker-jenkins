@@ -3,26 +3,23 @@
 REVISION_NUMBER=`git rev-list --count HEAD`
 FULL_VERSION="0.1.${REVISION_NUMBER}.${BUILD_NUMBER}"
 
-#targetArchs=("amd64" "armhf")
-#for arch in "${targetArchs[@]}"
-#do
-arch="amd64"
-
 targetArch=""
 if [[ "${TARGET^^}" == "ARMHF" ]];
 then
+  arch="armhf"
   targetArch=linux-arm
 fi;
 
 if [[ "${TARGET^^}" == "AMD64" ]];
 then
+  arch="amd64"
   targetArch=linux-x64
 fi;
 
 if [[ "${targetArch}" == "" ]];
 then
-	echo "Could not build for arch ${arch}"
-	continue
+  echo "Could not build for arch ${arch}"
+  continue
 fi;
 
 # Fix Dos Lines
