@@ -1,48 +1,37 @@
-FROM jenkins/jenkins:lts
+FROM alpine
 
 MAINTAINER EgoFelix <docker@egofelix.de>
 
-USER root
+RUN apk --no-cache add \
+      jenkins \
+      npm \
+      wget \
+      curl \
+      git \
+      unzip \
+      dpkg \
+      dpkg-dev \
+      xz \
+      gnupg \
+      dos2unix && \
+    rm -rf /usr/share/webapps/jenkins/jenkins.war && \
+    curl -L --output /root/dotnetsdk.tar.gz \
+      https://download.visualstudio.microsoft.com/download/pr/a84c2dee-3074-4c27-9b31-af0bc9a9ebcf/a8eb9a11b81c5b7119cf1578632ed186/dotnet-sdk-5.0.101-linux-musl-x64.tar.gz && \
+    mkdir -p /root/dotnet && \
+    tar vzxf /root/dotnetsdk.tar.gz -C /root/dotnet && \
+    rm /root/dotnetsdk.tar.gz && \
+    mkdir -p /tools && \
+    curl -L --output /tools/ReportGenerator.nupkg \
+      https://www.nuget.org/api/v2/package/ReportGenerator/4.8.3 && \
+    unzip -o /tools/ReportGenerator.nupkg -d /tools/ReportGenerator && \
+    rm /tools/ReportGenerator.nupkg
 
+ENV JENKINS_HOME=/jenkins
+ENV DOTNET_ROOT=/root/dotnet
+ENV PATH=$PATH:/root/dotnet
 ENV NUGET_XMLDOC_MODE=skip
 ENV DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
 ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
 
-# Basic Install
-RUN apt-get update && apt-get install -y --no-install-recommends curl wget apt-transport-https gnupg && \
-    curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add - && \
-    echo 'deb [arch=amd64] https://download.docker.com/linux/debian stretch stable' > /etc/apt/sources.list.d/docker.list && \
-    apt-get update && apt-get install -y --no-install-recommends dpkg-dev dos2unix apt-utils zip docker-ce supervisor && \
-    mkdir -p /etc/docker/ && \
-    echo '{ "experimental": true }' > /etc/docker/daemon.json && \
-# Net Core & Powershell
-    wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.asc.gpg && chown root:root /etc/apt/trusted.gpg.d/microsoft.asc.gpg && \
-    wget -qO- https://packages.microsoft.com/config/debian/9/prod.list > /etc/apt/sources.list.d/microsoft-prod.list && chown root:root /etc/apt/sources.list.d/microsoft-prod.list && \
-    apt-get update && apt-get install -y --no-install-recommends dotnet-sdk-3.1 dotnet-sdk-5.0 powershell && \
-    rm -rf /usr/share/dotnet/sdk/NuGetFallbackFolder && \
-# CodeCoverage for Net Core
-    mkdir /tools && \
-    wget https://www.nuget.org/api/v2/package/ReportGenerator/4.6.0 -qO /tools/ReportGenerator.nupkg && \
-# ReportGenerator
-    apt-get install -y --no-install-recommends zip && \
-    mkdir /tools/ReportGenerator && \
-    unzip -o /tools/ReportGenerator.nupkg -d /tools/ReportGenerator && \
-# Dotnet retire
-    dotnet tool install -g dotnet-retire && \
-# Fix Nuget
-    mkdir -p /tmp/NuGetScratch && \
-    chown -R jenkins:jenkins /tmp/NuGetScratch && \
-# Allow Jenkins to call docker
-    apt-get install -y --no-install-recommends qemu-user && \
-    usermod -aG docker jenkins && \
-# Cleanup
-    rm -rf /var/lib/apt/lists/*
-  
-COPY etc/ /etc/
-COPY buildbot.sh /opt/buildbot
-COPY testbot.ps1 /opt/testbot
-
-RUN chmod +x /opt/buildbot
-RUN chmod +x /opt/testbot
-
-ENTRYPOINT /usr/bin/supervisord --nodaemon --configuration /etc/supervisor/supervisord.conf --pidfile /run/supervisord.pid
+CMD /usr/bin/java -jar /usr/share/webapps/jenkins/jenkins.war
