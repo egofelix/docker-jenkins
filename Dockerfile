@@ -13,7 +13,8 @@ RUN apk --no-cache add \
       dpkg-dev \
       xz \
       gnupg \
-      dos2unix && \
+      dos2unix \
+      supervisor && \
     rm -rf /usr/share/webapps/jenkins/jenkins.war && \
     curl -L --output /root/dotnetsdk.tar.gz \
       https://download.visualstudio.microsoft.com/download/pr/a84c2dee-3074-4c27-9b31-af0bc9a9ebcf/a8eb9a11b81c5b7119cf1578632ed186/dotnet-sdk-5.0.101-linux-musl-x64.tar.gz && \
@@ -34,4 +35,6 @@ ENV DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
 ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
 
-CMD /usr/bin/java -jar /usr/share/webapps/jenkins/jenkins.war
+COPY jenkins.ini /etc/supervisor.d/
+
+CMD /usr/bin/supervisord --nodaemon --configuration /etc/supervisord.conf
